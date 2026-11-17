@@ -842,7 +842,7 @@ function renderDetail(id){
       html+='</section><div class="product-section"><div class="section-title"><span class="bar"></span><h2>在售制品</h2><span class="cnt">共 '+d.products.length+' 项</span></div><div class="product-grid">';
       d.products.forEach(p=>{
         html+='<article class="product-card"><div class="p-img">'+
-          (p.image?'<img class="zoomable" loading="lazy" src="'+esc(p.image)+'" alt="'+esc(p.title)+'">':IMG_ICON+'<span class="ph-text">暂无图片</span>')+
+          (p.image?'<img class="zoomable" loading="lazy" src="'+esc(p.image.replace(/\/([^/]+)$/,'/thumb/$1'))+'" data-full="'+esc(p.image)+'" alt="'+esc(p.title)+'">':IMG_ICON+'<span class="ph-text">暂无图片</span>')+
           '</div><div class="p-body"><span class="p-type">'+esc(p.type||'其他')+'</span>'+
           '<h3 class="p-title">'+esc(p.title)+'</h3>'+
           '<div class="p-price">'+priceHtml(p.price)+'</div>'+
@@ -897,7 +897,7 @@ function closeLightbox(){
 }
 document.addEventListener('click',e=>{
   const z=e.target.closest('.zoomable');
-  if(z){e.preventDefault();openLightbox(z.src);return;}
+  if(z){e.preventDefault();openLightbox(z.getAttribute('data-full'));return;}
   if(lightbox.classList.contains('open')&&(e.target===lightbox||e.target.closest('#lb-close')))closeLightbox();
 });
 document.addEventListener('keydown',e=>{
