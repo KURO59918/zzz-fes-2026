@@ -80,13 +80,6 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 }
 .pill b{font-size:16px}
 .pill.solid{background:var(--ink);color:var(--yellow)}
-.search-box{flex:1;min-width:220px;position:relative}
-.search-box input{
-  width:100%;padding:12px 16px 12px 42px;border:2px solid var(--ink);border-radius:10px;
-  font-size:14px;font-weight:500;background:var(--light);outline:none;
-}
-.search-box input:focus{box-shadow:0 0 0 3px rgba(248,221,51,.7)}
-.search-box svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px}
 .zone-filters{display:flex;gap:8px;flex-wrap:wrap}
 .zf{
   border:2px solid var(--ink);border-radius:9px;padding:8px 18px;font-weight:900;font-size:14px;
@@ -123,7 +116,6 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .ss-done{background:var(--ink);color:var(--yellow)}
 .ss-demo{background:var(--yellow);color:var(--ink);border:1.5px solid var(--ink)}
 .ss-todo{background:transparent;color:var(--ink-soft);border:1.5px solid var(--card-deep)}
-.no-result{grid-column:1/-1;text-align:center;padding:50px 20px;font-weight:700;color:var(--ink-soft);background:var(--paper-deep);border:2px dashed var(--card-deep);border-radius:12px}
 
 /* ==================== 详情页 ==================== */
 #view-detail{display:none}
@@ -174,24 +166,16 @@ body.detail-on #view-detail{display:block}
 .section-title .bar{width:8px;height:26px;background:var(--yellow);border:1.5px solid var(--ink);border-radius:3px}
 .section-title h2{font-size:22px;font-weight:900}
 .section-title .cnt{font-size:12px;font-weight:700;color:var(--ink-soft)}
-.product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.product-card{background:var(--light);border:2px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;transition:transform .13s,box-shadow .13s;min-width:0}
-.product-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
-.p-img{aspect-ratio:1/1;background:var(--paper-deep);display:flex;align-items:center;justify-content:center;position:relative;border-bottom:2px solid var(--card-deep)}
-.p-img img{width:100%;height:100%;object-fit:cover;cursor:zoom-in}
-.p-img svg{width:42px;height:42px;opacity:.35}
-.p-img .ph-text{position:absolute;bottom:8px;font-size:10px;font-weight:700;color:var(--ink-soft);opacity:.7}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:start}
+.gallery-card{margin:0;background:var(--light);border:2px solid var(--line);border-radius:10px;overflow:hidden;min-width:0;transition:transform .13s,box-shadow .13s}
+.gallery-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.gallery-card img{width:100%;height:auto;display:block;cursor:zoom-in;background:var(--paper-deep)}
 /* ===== 图片放大 Lightbox ===== */
 .lightbox{position:fixed;inset:0;background:rgba(15,15,14,.92);display:flex;align-items:center;justify-content:center;padding:18px;z-index:999;opacity:0;visibility:hidden;transition:opacity .2s;cursor:zoom-out}
 .lightbox.open{opacity:1;visibility:visible}
 .lb-img{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px;box-shadow:0 10px 40px rgba(0,0,0,.5)}
 .lb-close{position:absolute;top:14px;right:18px;width:44px;height:44px;border-radius:50%;background:var(--yellow);color:var(--ink);font-size:26px;font-weight:900;line-height:1;display:flex;align-items:center;justify-content:center}
 .lb-close:active{transform:scale(.92)}
-.p-body{padding:12px 14px 15px;display:flex;flex-direction:column;gap:7px;flex:1}
-.p-type{align-self:flex-start;font-size:10px;font-weight:900;background:var(--paper-deep);border:1.5px solid var(--card-deep);padding:2px 8px;border-radius:6px}
-.p-title{font-size:14px;font-weight:700;line-height:1.4;word-break:break-word}
-.p-price{font-size:18px;font-weight:900;color:var(--ink)}
-.p-desc{font-size:12px;color:var(--ink-soft);margin-top:auto;word-break:break-word}
 
 /* 上一个/下一个 */
 .pager{display:flex;justify-content:space-between;gap:12px;margin-top:34px}
@@ -209,10 +193,9 @@ body.detail-on #view-detail{display:block}
 /* ==================== 响应式 ==================== */
 @media (max-width:1100px){
   .stall-grid{grid-template-columns:repeat(5,1fr)}
-  .product-grid{grid-template-columns:repeat(3,1fr)}
 }
 @media (max-width:760px){
-  .product-grid{grid-template-columns:repeat(2,1fr)}
+  .gallery-grid{grid-template-columns:repeat(2,1fr);gap:10px}
   .owner-grid{grid-template-columns:1fr}
   .topbar-side{position:static;align-items:flex-start;margin-top:14px}
   .maker{align-items:flex-start}
@@ -223,7 +206,6 @@ body.detail-on #view-detail{display:block}
   .wrap{padding:0 14px 50px}
   .detail-hero{padding:20px 18px}
 }
-@media (max-width:420px){.product-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -256,10 +238,6 @@ body.detail-on #view-detail{display:block}
       <span class="pill">已收录 <b id="stat-done">0</b></span>
       <span class="pill">待补充 <b id="stat-todo">0</b></span>
     </div>
-    <div class="search-box">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
-      <input id="search-input" type="text" placeholder="搜索摊位编号 / 名称 / 摊主 / 制品，如 A01、徽章、立牌" autocomplete="off">
-    </div>
     <div class="zone-filters" id="zone-filters"></div>
   </div>
   <div id="zone-container"></div>
@@ -287,16 +265,16 @@ body.detail-on #view-detail{display:block}
    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    【填写模板】复制下面整段，把键名（如 'A02'）换成对应摊位编号：
    'A02': {
-     owner: '摊主昵称或社团名',
-     xhs:   '摊主小红书主页或帖子链接（可留空）',
+     owner: '摊主昵称或社团名（多个摊主可写数组，如 ['摊主一','摊主二']）',
+     xhs:   '摊主主页或帖子链接（可留空，多个链接写数组）',
      note:  '备注：限购 / 预约 / 代购 / 无现货等（可留空）',
-     products: [
-       { title:'制品名称', type:'徽章/立牌/小卡/挂件/本子等', price:'30', desc:'规格、数量、备注（可留空）', image:'' },
-       { title:'第二个制品', type:'类型', price:'45', desc:'', image:'' }
+     images: [
+       'assets/a02/1.jpg',
+       'assets/a02/2.jpg'
      ]
    },
-   说明：price 直接写数字或文字（如 30、30/套、赠）。image 留空会显示占位图；
-   若要放真实图片，把图片放进本文件同级的 assets 文件夹，再写 image:'assets/图.png'。
+   说明：把图片放进本文件同级的 assets 文件夹，images 里写相对路径即可；
+   没有图片就写 images: []，页面会自动显示空状态。
    ================================================================ */
 
 const STALLS = [
@@ -344,18 +322,13 @@ const STALL_DETAILS = {
     owner:'万谷丰登',
     xhs:'https://www.xiaohongshu.com/user/profile/635216f7000000001901cfd1?xsec_token=ABsSF0EJlXwalBhOoo2OGBn0Tq9hyKnjtSyzNG3nlBedY=&xsec_source=pc_user',
     note:'待摊主发布完整制品菜单',
-    products:[
-      {title:'待完善',type:'徽章',price:'xx/款',desc:'',image:''},
-      {title:'待完善',type:'徽章',price:'xx/款',desc:'',image:''},
-      {title:'待完善',type:'徽章',price:'xx/款',desc:'',image:''},
-      {title:'待完善',type:'徽章',price:'xx/款',desc:'',image:''}
-    ]
+    images: []
   },
   'A02': {
     owner: ['雪之岚异端','带一个表','Fukuro袋子'],
     xhs: 'https://b23.tv/yKCEQib',
     note: '摊主链接为B站主页',
-    products: []
+    images: []
   },
   'A03': {
     owner: '淬火社同人周边,4C-Fantasy（四色绮想）',
@@ -364,11 +337,7 @@ const STALL_DETAILS = {
       'https://www.xiaohongshu.com/user/profile/648ecf59000000000f0061db?xsec_token=AB-wRIg44TwduaJf4pB9AFWoK-yhw8dxmOCEMJMacR0XI%3D&xsec_source=pc_user'
     ],
     note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: []
   },
   'A04': {
     owner:  '薯粉泥,方person也',
@@ -376,32 +345,8 @@ const STALL_DETAILS = {
       'https://xhslink.cn/o/6cYhKYzXvC3',
       'https://xhslink.cn/o/AkGzA1msY2C'
     ],
-    note: '摊主已发布完整制品菜单,本页面待更新方老师制品信息',
-    products: [
-      { title: '满赠', type: '满赠', price: '', desc: '满60赠法厄同兄妹打卡棒、纸袋，\n满20赠小挽昼双面小卡，\n消费即赠随机亚克力挂件(共3款)，\n关注赠希希芙纸片、哲哥方卡，\n购买色纸送亚克力支架，\n购买校园系列全套立牌即送录取通知书套组，\n购买单人SET送一抽Bad?校园系列小卡', image: 'assets/a04/1.jpg' },
-      { title: '镭射票拍立得套组（共5款）', type: '镭射票', price: '20/套', desc: '一套2点', image: 'assets/a04/2.jpg' },
-      { title: '无边色纸（共5款）', type: '色纸', price: '20/款', desc: '', image: 'assets/a04/3.jpg' },
-      { title: '水波火焰纹亚克力色纸（共5款）', type: '色纸', price: '30/款', desc: '', image: 'assets/a04/4.jpg' },
-      { title: 'bad系列随机小卡（共6款）', type: '小卡', price: '6/款', desc: '', image: 'assets/a04/5.jpg' },
-      { title: '进口珠光明信片套组（含5款）', type: '明信片', price: '20/套', desc: '', image: 'assets/a04/6.jpg' },
-      { title: '亚克力色纸（共8款）', type: '色纸', price: '30/款', desc: '', image: 'assets/a04/7.jpg' },
-      { title: '鼠标垫（共5款）', type: '鼠标垫', price: '45/款', desc: '', image: 'assets/a04/8.jpg' },
-      { title: '磨砂小卡（共4款）', type: '小卡', price: '6/款', desc: '材质看图', image: 'assets/a04/9.jpg' },
-      { title: '明信片套组（含7款）', type: '明信片', price: '25/套', desc: '', image: 'assets/a04/10.jpg' },
-      { title: '亚克力透卡/悠真白卡（共3款）', type: '小卡', price: '3/款', desc: '', image: 'assets/a04/11.jpg' },
-      { title: '维琳娜挂画', type: '挂画', price: '50/件', desc: '', image: 'assets/a04/12.jpg' },
-      { title: '双闪徽章（共6款）', type: '徽章', price: '18/款', desc: '珍珠白双闪烫金', image: 'assets/a04/13.jpg' },
-      { title: '镭射双插亚克力立牌（共5款）', type: '立牌', price: '45/款', desc: '', image: 'assets/a04/14.jpg' },
-      { title: 'A4文件夹（共5款）', type: '文件夹', price: '20/款', desc: '', image: 'assets/a04/15.jpg' },
-      { title: '随机qq人彩窗厚亚克力（共6款））', type: '立牌', price: '12/款', desc: '', image: 'assets/a04/16.jpg' },
-      { title: '妄想天使明信片套组（含3款）', type: '明信片', price: '15/套', desc: '', image: 'assets/a04/17.jpg' },
-      { title: '对空六课无边色纸（共2款）', type: '色纸', price: '20/款', desc: '', image: 'assets/a04/18.jpg' },
-      { title: '蕾米镭射双插立牌', type: '立牌', price: '45/款', desc: '赠珠光明信片一张', image: 'assets/a04/19.jpg' },
-      { title: '随机fairy亚克力挂件（共5款）', type: '挂件', price: '6/款', desc: '', image: 'assets/a04/20.jpg' },
-      { title: '双闪徽章（共7款）', type: '徽章', price: '12/款', desc: '', image: 'assets/a04/21.jpg' },
-      { title: '拍立得小卡', type: '小卡', price: '5/款', desc: '', image: 'assets/a04/22.jpg' },
-      { title: '苍角彩窗亚克力立牌', type: '立牌', price: '35/款', desc: '', image: 'assets/a04/23.jpg' }
-    ]
+    note: '方老师后两弹宣图待补充',
+    images: ['assets/a04/1.jpg','assets/a04/2.jpg','assets/a04/3.jpg','assets/a04/4.jpg','assets/a04/5.jpg','assets/a04/6.jpg','assets/a04/7.jpg','assets/a04/8.jpg','assets/a04/9.jpg','assets/a04/10.jpg','assets/a04/11.jpg','assets/a04/12.jpg','assets/a04/13.jpg','assets/a04/14.jpg','assets/a04/15.jpg','assets/a04/16.jpg','assets/a04/17.jpg','assets/a04/18.jpg','assets/a04/19.jpg','assets/a04/20.jpg','assets/a04/21.jpg','assets/a04/22.jpg','assets/a04/23.jpg','assets/a04/24.jpg','assets/a04/25.jpg','assets/a04/26.jpg','assets/a04/27.jpg','assets/a04/28.jpg','assets/a04/29.jpg','assets/a04/30.jpg','assets/a04/31.jpg']
   },
   'A05': {
     owner: ['-凉夏-【Fes-A05】','珂珂希尔','YUYA🐟'],
@@ -411,34 +356,13 @@ const STALL_DETAILS = {
       'https://www.xiaohongshu.com/user/profile/6119380700000000200296d5?xsec_token=ABGWsCODR1CtOft--7fqaVXWjZjdYlngUqcdRpfjGb5aE%3D&xsec_source=pc_user'
     ],
     note: '摊主已发布部分制品菜单，等制品实拍菜单上传后更新本页面，可先移步链接查看',
-    products: [
-      { title:'亚克力双闪色纸', type:'色纸', price:'20/款', desc:'全套3款50', image: '' },
-      { title:'双闪徽章', type:'徽章', price:'10/款', desc:'全套3款25', image: '' },
-      { title:'妄想日常系列转印贴', type:'贴纸', price:'15/张', desc:'', image: '' },
-      { title:'彩窗亚克力厚立牌', type:'立牌', price:'12/个', desc:'6cm', image: '' },
-      { title:'洛威尔兄弟幼年立牌', type:'立牌', price:'22/个', desc:'10cm', image: '' },
-      { title:'瘦长邦影皮革收纳扣', type:'其他', price:'18/个', desc:'', image: '' },
-      { title:'克拉蕾/洛克茜充棉织唛挂件', type:'挂件', price:'5/个', desc:'6cm', image: '' },
-      { title:'菲欧妮好运刺绣御守', type:'挂件', price:'30/个', desc:'', image: '' },
-      { title:'安比彩窗亚克力挂件', type:'挂件', price:'10/个', desc:'双面滴胶6cm', image: '' },
-      { title:'安比彩窗亚克力滴胶冰箱贴', type:'冰箱贴', price:'8/个', desc:'', image: '' },
-      { title:'仿吸塑亚克力摇摇乐挂件', type:'挂件', price:'25/个', desc:'往期余量', image: '' },
-      { title:'绵纸冰箱贴', type:'冰箱贴', price:'10/个\n25/套', desc:'往期余量', image: '' },
-      { title:'触感膜烫签方卡', type:'小卡', price:'5/个', desc:'10cm\n往期余量', image: '' },
-      { title:'奥波勒斯小队pvc贴纸（10枚入）', type:'贴纸', price:'8/套', desc:'往期余量', image: '' },
-      { title:'满赠须知', type:'满赠', price:'见图片', desc:'', image: '' },
-      { title:'南宫羽似乎有些触动方贴纸', type:'无料', price:'无料', desc:'', image: '' }
-    ]
+    images: []
   },
   'A06': {
     owner: '猫猫头工作室',
     xhs: 'https://www.xiaohongshu.com/user/profile/662dc63e000000001c014a52?xsec_token=ABjPlWvERMA0smREf_b1SXam5A1kS7XqahM67iPP6BDSk%3D&xsec_source=pc_user',
     note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: []
   },
   'A07': {
     owner: ['三甜','有猫饼同人社','麦O劳美味大汉堡'],
@@ -448,11 +372,7 @@ const STALL_DETAILS = {
       'https://www.xiaohongshu.com/user/profile/5b41af04e8ac2b78ca442c82?xsec_token=ABsoLiarbccnOo8A2UUEH3gPkWB2hlCAfjlBJUDZEmcTs%3D&xsec_source=pc_user'
     ],
     note: '摊主已发布部分制品菜单，目前只更新了大汉堡老师的摊宣第一弹',
-    products: [
-      { title:'满赠', type:'满赠', price:'详情看图', desc:'每满50任选一组珠光方卡，每日100套', image: 'assets/a07/1.jpg' },
-      { title:'无料', type:'无料', price:'详情看图', desc:'', image: 'assets/a07/2.jpg' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: ['assets/a07/1.jpg','assets/a07/2.jpg','assets/a07/3.jpg','assets/a07/4.jpg','assets/a07/5.jpg','assets/a07/6.jpg','assets/a07/7.jpg','assets/a07/8.jpg','assets/a07/9.jpg','assets/a07/10.jpg']
   },
   'A08': {
     owner: ['摩卡北北','仙家严选大碗茶'],
@@ -461,11 +381,7 @@ const STALL_DETAILS = {
       'https://www.xiaohongshu.com/user/profile/5f30176500000000010053d4?xsec_token=ABuD9Jdz-aKup06sr_iUJsKRiCa87TJVY1dK2MyyUQntQ%3D&xsec_source=pc_user'
     ],
     note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: []
   },
   'A09': {
     owner: ['冰镇H2O','殇雪笙桃','歆麦why'],
@@ -475,11 +391,7 @@ const STALL_DETAILS = {
       'https://www.xiaohongshu.com/user/profile/66f51f65000000001d021460?xsec_token=ABxXo_8o3nDewdXQlV-8GvUGjJsrqVBu9024la9Eho6sQ%3D&xsec_source=pc_user'
     ],
     note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: []
   },
 'B01': {
     owner: ['摸鱼的契约叔','狗空不是米吹'],
@@ -488,34 +400,27 @@ const STALL_DETAILS = {
       'https://www.xiaohongshu.com/user/profile/63d73027000000002702aa1a?xsec_token=ABxZAE9uxrY2SS_8991esgs5fdMGVtW_ti4Hxo3p5NLww%3D&xsec_source=pc_comment'
     ],
     note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: []
   },
 'B02': {
-    owner: ['德黑兰潜水灵芝','绝区雪'],
+    owner: ['德黑兰潜水灵芝','绝区雪','鱼芝士 ','谙虞','西红柿酱','¹今日份『%#b&■』時間。。','深海骨尾魚-'],
     xhs: [
       'https://www.xiaohongshu.com/user/profile/5b9e72fe98c11e000140fd56?xsec_token=ABzumax1mxyPM3_MGZa2XtkI0khLH1iD72n_DtjmBWaLY%3D&xsec_source=pc_comment',
-      'https://www.xiaohongshu.com/user/profile/63288b100000000023024f27?xsec_token=ABohb1Og9DDqvtgSL65BSLjykJ8jPgO1ZKavVXQ24wtu8%3D&xsec_source=pc_user'
+      'https://www.xiaohongshu.com/user/profile/63288b100000000023024f27?xsec_token=ABohb1Og9DDqvtgSL65BSLjykJ8jPgO1ZKavVXQ24wtu8%3D&xsec_source=pc_user',
+      'https://www.xiaohongshu.com/user/profile/64e1b844000000000100d743?xsec_token=ABOiUwdJfnvH8fiuZdhAEV-hpF0lI2quTp-uu_9q18Q7E%3D&xsec_source=pc_comment',
+      'https://www.xiaohongshu.com/user/profile/5fc97e5900000000010095e2?xsec_token=ABGZ1oPDb4WOL3hWmWuJMX5-OOU4AlncZ0UPYGbIDIzYY%3D&xsec_source=pc_comment',
+      'https://www.xiaohongshu.com/user/profile/6636e00600000000070050ba?xsec_token=ABKr02CRIdgYMTG1Iz_BlGZKnLN_g4Y-8MiPmt4-OKCew%3D&xsec_source=pc_comment',
+      'https://www.xiaohongshu.com/user/profile/67f4834b000000000e02fe1a?xsec_token=ABil1-cCfpy3mMIQFdAAybeRahXh2HYPdFx0TjpQh49HQ%3D&xsec_source=pc_comment',
+      'https://www.xiaohongshu.com/user/profile/651955fb0000000023027695?xsec_token=ABszMO64f6KKiIbRz9LOJngHKYB-vOCc5cTOhLcadECAg%3D&xsec_source=pc_comment'
     ],
-    note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    note: '已记录德黑兰，绝区雪，西红柿酱老师制品',
+    images: ['assets/b02/1.jpg','assets/b02/2.jpg','assets/b02/3.jpg','assets/b02/4.jpg','assets/b02/5.jpg','assets/b02/6.jpg','assets/b02/7.jpg','assets/b02/8.jpg','assets/b02/9.jpg','assets/b02/10.jpg','assets/b02/12.jpg','assets/b02/13.jpg','assets/b02/14.jpg']
   },
 'B03': {
     owner: '翎山重工',
     xhs: 'https://www.xiaohongshu.com/user/profile/63e392c80000000027037314?xsec_token=ABBLdHRKBdVOyeZ_JpU5E7Xo4EvdCuFQL-VXbqx2CaAaU%3D&xsec_source=pc_comment',
-    note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    note: '已记录摊宣第一弹',
+    images: ['assets/b03/1.jpg','assets/b03/2.jpg','assets/b03/3.jpg','assets/b03/4.jpg']
   },
 'B04': {
     owner: ['艾比里德尔','一打柯基','-茗明竹-'],
@@ -524,12 +429,8 @@ const STALL_DETAILS = {
       'https://www.xiaohongshu.com/user/profile/5c07edbb000000000501b2ef?xsec_token=ABxFqWtPpACuddYrS9wxgmPINg_BhePA_lUxQV0Sa-Ys0%3D&xsec_source=pc_comment',
       'https://xhslink.cn/o/J5xnnCLz2N'
     ],
-    note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    note: '已记录艾老师摊宣',
+    images: ['assets/b04/1.jpg','assets/b04/2.jpg','assets/b04/3.jpg','assets/b04/4.jpg','assets/b04/5.jpg','assets/b04/6.jpg','assets/b04/7.jpg','assets/b04/8.jpg']
   },
 'B05': {
     owner: ['五万五','一般路过的同人女'],
@@ -537,32 +438,20 @@ const STALL_DETAILS = {
       'https://www.xiaohongshu.com/user/profile/64a2f17b000000001001d5ae?xsec_token=ABo7-ppxLICrV3I3TBXi_ULkj7IxwzSskuBoZvszIVLag%3D&xsec_source=pc_comment',
       'https://www.xiaohongshu.com/user/profile/6502dd370000000002013c15?xsec_token=AB9ddrTlZuSnS745AH6OoBjfVBVoeT4FZaIzktxJl2D3U%3D&xsec_source=pc_comment'
     ],
-    note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    note: '已记录五万五老师摊宣',
+    images: ['assets/b05/1.jpg','assets/b05/2.jpg','assets/b05/3.jpg','assets/b05/4.jpg','assets/b05/5.jpg','assets/b05/6.jpg']
   },
 'B06': {
     owner: '染式咖啡',
     xhs: 'https://www.xiaohongshu.com/user/profile/64165fbd0000000012010358?xsec_token=ABeV0EKC_s88g0DFus3w8nqIlxkrtxBQsbM3pP2liwynI%3D&xsec_source=pc_comment',
-    note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    note: '已记录第一弹摊宣',
+    images: ['assets/b06/1.jpg','assets/b06/2.jpg','assets/b06/3.jpg','assets/b06/4.jpg','assets/b06/5.jpg','assets/b06/6.jpg']
   },
 'B07': {
     owner: '旅涂剧社',
     xhs: 'https://www.xiaohongshu.com/user/profile/650f2a6d0000000012007699?xsec_token=ABi7fDKFEYMSz0vypi2oTZoIkbnJnPrrPYjbTbmPZ865k%3D&xsec_source=pc_comment',
     note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: []
   },
 'B08': {
     owner: ['黑特','yuyiosang'],
@@ -571,26 +460,18 @@ const STALL_DETAILS = {
       'https://www.xiaohongshu.com/user/profile/5dfc72010000000001003e8c?xsec_token=AB6E0vewh7eJ-sATRNS8qjkpscl3D1K_mSA_HunbA6JTg%3D&xsec_source=pc_comment'
     ],
     note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: []
   },
 'B09': {
     owner: '徐萌萌',
     xhs: 'https://www.xiaohongshu.com/user/profile/604ad6e6000000000100b6a3?xsec_token=ABalrI9yG9AlC2K1vsW5yvWiLzgNRdunxVUJheO-hFrYQ%3D&xsec_source=pc_comment',
-    note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    note: '已记录完整',
+    images: ['assets/b09/1.jpg','assets/b09/2.jpg','assets/b09/3.jpg','assets/b09/4.jpg','assets/b09/5.jpg','assets/b09/6.jpg','assets/b09/7.jpg','assets/b09/8.jpg']
   },
 'C01': {
     owner: '鱼鹅BABA',
     xhs: 'https://xhslink.cn/o/31qmr6fJrJ',
-    products: []
+    images: []
   },
 'C02': {
     owner: ['Thoyadoggy【猫狗豆line版】','可爱公馆（绝FES准备中）'],
@@ -598,22 +479,14 @@ const STALL_DETAILS = {
       'https://www.xiaohongshu.com/user/profile/6648dde9000000000700557b?xsec_token=ABMHZf3eNaBLJ2ttIlD63JCMob4OowqgAkoiVZnuLIA20=&xsec_source=pc_user',
       'https://www.xiaohongshu.com/user/profile/5f9186d30000000001004330?xsec_token=ABoox1DDewCghX8HOhZT1AbbpjzUHCcPpJNCtGcUUiOVM=&xsec_source=pc_comment'
     ],
-    note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    note: '已收录完整',
+    images: ['assets/c02/1.jpg','assets/c02/2.jpg','assets/c02/3.jpg','assets/c02/4.jpg','assets/c02/5.jpg']
   },
 'C03': {
     owner: 'CAISENA',
     xhs: 'https://www.xiaohongshu.com/user/profile/64ef84d30000000004027a9b?xsec_token=AB9e5o36JHQQ9CQE324P8ODSU1LG8Tbf1jUnhZ2GmBQGg=&xsec_source=pc_user',
     note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: []
   },
 'C04': {
     owner: ['零时钟点工','白面包裹小黑猫'],
@@ -622,11 +495,7 @@ const STALL_DETAILS = {
       'https://www.xiaohongshu.com/user/profile/655c7a03000000000800018b?xsec_token=AB-MjtvVbmiQOcKTS-PP3EOUf_EDld0iYKKfavQRhcrZY=&xsec_source=pc_user'
     ],
     note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: []
   },
 'C05': {
     owner: ['阿粥（无糖多冰版）','高山娃娃菜'],
@@ -635,11 +504,7 @@ const STALL_DETAILS = {
       'https://www.xiaohongshu.com/user/profile/60d835d70000000001004cb1?xsec_token=ABmFoWzSAIPnLSngp058fbAt3ZyAQLja43JwyzWlUdWSg%3D&xsec_source=pc_user'
     ],
     note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: []
   },
 'C06': {
     owner: ['电子蜡烛','-saske-'],
@@ -647,7 +512,7 @@ const STALL_DETAILS = {
       'https://xhslink.cn/o/8jS2KOmhxu9',
       'https://xhslink.cn/o/1E1dCBvaqDA'
     ],
-    products: []
+    images: []
   },
 'C07': {
     owner: ['奥奥orsat','VIA石楠'],
@@ -656,21 +521,13 @@ const STALL_DETAILS = {
       'https://www.xiaohongshu.com/user/profile/66b37d39000000001d030600?xsec_token=AB_tQ8Oz3DRqbTGEqXEpC1L2Wb4ukm7j5Strkkh5zOtAg%3D&xsec_source=pc_user'
     ],
     note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: []
   },
 'C08': {
     owner: '花久花酒',
     xhs: 'https://www.xiaohongshu.com/user/profile/66960ab8000000000f037b66?xsec_token=ABrnnMO6ozlk75dsVOH51oFe9IoTr-dN3cO4HxGgN3VTA=&xsec_source=pc_user',
     note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: []
   },
 'C09': {
     owner: ['小鸟软糖','中午起床'],
@@ -678,22 +535,14 @@ const STALL_DETAILS = {
       'https://www.xiaohongshu.com/user/profile/5c8c81da000000001000daf7?xsec_token=ABsht3R9jkHhVSpxpoz7IJXknyBzdPDSlBL7Jq_RE4HCY%3D&xsec_source=pc_user',
       'https://www.xiaohongshu.com/user/profile/5d374985000000001200274b?xsec_token=ABKUuHkLc9u8IOediDexvSW-PKs5SabZ7aJ9__kqaThoA=&xsec_source=pc_user'
     ],
-    note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    note: '已记录小鸟软糖第一弹和中午起床老师第一二弹',
+    images: ['assets/c09/1.png','assets/c09/2.png','assets/c09/3.jpg','assets/c09/4.png','assets/c09/5.jpg','assets/c09/6.jpg']
   },
 'D01': {
     owner: '原汁云喵',
     xhs: 'https://www.xiaohongshu.com/user/profile/63dba288000000002702b44a?xsec_token=AB5fjUsS4wg4DO0L7YYuIzbeKLTUUJmP6HSxIHCjZuKUk%3D&xsec_source=pc_comment',
     note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: []
   },
 'D02': {
     owner: ['SuperAppleMan','Seseren'],
@@ -702,11 +551,7 @@ const STALL_DETAILS = {
       'https://www.xiaohongshu.com/user/profile/666bd21a000000001c000558?xsec_token=ABegX84ukwCbQur5n8n_m5kXkrN4x2pMbKxRPNUWbQpAY%3D&xsec_source=pc_search'
     ],
     note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: []
   },
 'D03': {
     owner: ['一万根韭菜','姬海棠羽笠果'],
@@ -715,56 +560,36 @@ const STALL_DETAILS = {
       'https://www.xiaohongshu.com/user/profile/64ccf5a4000000000b005826?xsec_token=ABIcW4d-YO1Qd70WuPu5mC1uy0Z9BA_skaqM15F7OUbsM%3D&xsec_source=pc_comment'
     ],
     note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: []
   },
 'D04': {
-    owner: '七赫兹_SevenHz',
+    owner: '七赫兹_SevenHz，心脏弱真君老师',
     xhs: 'https://www.xiaohongshu.com/user/profile/5d0480380000000011011dd7?xsec_token=ABBtW0r1RPyEK_Ox6IsC0ONqCYdxbeNXrBZ6xjZWwktlk%3D&xsec_source=pc_comment',
     note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: []
   },
 'D05': {
     owner: '寰宇诺亚',
     xhs: 'https://www.xiaohongshu.com/user/profile/5b0362e511be1004582134da?xsec_token=ABJ09PpW63YXtgCEDPw3-VZFCJmViE069hMKOidLw5w3k%3D&xsec_source=pc_comment',
     note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: []
   },
 'D06': {
     owner: 'ONANA Robotics',
     xhs: 'https://www.xiaohongshu.com/user/profile/6814ba2d000000000d008c0b?xsec_token=ABqQ15CCcoQTYzQv5Ml-5jq-ITyqH__xDCjPnC0bjVg28%3D&xsec_source=pc_comment',
     note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: []
   },
 'D07': {
     owner: '西瓜啵啵好喝',
     xhs: 'https://xhslink.cn/o/425mnIeUe6H',
-    products: []
+    images: []
   },
 'D08': {
     owner: '哈米伦的弄笛者',
     xhs: 'https://www.xiaohongshu.com/user/profile/659fb8d8000000001f038d2a?xsec_token=ABmA1Itxcq9x6cnjP5bv2qo2LzLpEWVq5p5tpmhDpo0ec%3D&xsec_source=pc_comment',
     note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: []
   },
 'D09': {
     owner: ['KKOMDA','邦布帮'],
@@ -773,11 +598,7 @@ const STALL_DETAILS = {
       'https://www.xiaohongshu.com/user/profile/6551d9ff000000000202a20c?xsec_token=ABKUgwBWfFKuoPnQbyb1Djt0nSDsWHpzG6hVDkTJtN0Og%3D&xsec_source=pc_comment'
     ],
     note: '待摊主发布完整制品菜单',
-    products: [
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' },
-      { title:'待完善', type:'徽章', price:'xx/款', desc:'', image: '' }
-    ]
+    images: []
   },
 };
 
@@ -785,12 +606,9 @@ const STALL_DETAILS = {
 const ZONES = ['A','B','C','D'];
 const ZONE_NAME = {A:'A 区',B:'B 区',C:'C 区',D:'D 区'};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-/* 价格：以数字开头自动加 ¥；填“无料/赠/交换”等文字则原样显示 */
-function priceHtml(p){const s=p==null?'':String(p);return /^\d/.test(s)?'¥'+esc(s):esc(s);}
 function detailOf(id){return STALL_DETAILS[id]||null;}
 function xhsSearchUrl(name){return 'https://www.xiaohongshu.com/search_result?keyword='+encodeURIComponent(name+' 绝区零');}
 let activeZone='ALL';
-let keyword='';
 
 /* ==================== 主页渲染 ==================== */
 function renderStats(){
@@ -810,17 +628,6 @@ function renderZoneFilters(){
   el.innerHTML=html;
   el.querySelectorAll('.zf').forEach(b=>b.addEventListener('click',()=>{activeZone=b.dataset.zone;renderHome();}));
 }
-function matchKeyword(s){
-  if(!keyword)return true;
-  const k=keyword.toLowerCase();
-  const d=detailOf(s.id);
-  let hay=s.id+' '+s.name;
-  if(d){
-    hay+=' '+(d.owner||'')+' '+(d.note||'');
-    (d.products||[]).forEach(p=>hay+=' '+(p.title||'')+' '+(p.type||'')+' '+(p.desc||''));
-  }
-  return hay.toLowerCase().includes(k);
-}
 function statusBadge(s){
   const d=detailOf(s.id);
   if(!d)return '<span class="stall-status ss-todo">待补充</span>';
@@ -831,12 +638,10 @@ function renderHome(){
   renderZoneFilters();
   const box=document.getElementById('zone-container');
   let html='';
-  let anyVisible=false;
   ZONES.forEach(z=>{
     if(activeZone!=='ALL'&&activeZone!==z)return;
-    const list=STALLS.filter(s=>s.id[0]===z&&matchKeyword(s));
+    const list=STALLS.filter(s=>s.id[0]===z);
     if(!list.length)return;
-    anyVisible=true;
     const done=STALLS.filter(s=>s.id[0]===z&&detailOf(s.id)).length;
     html+='<section class="zone-block view-enter"><div class="zone-head">'+
       '<span class="zone-badge">'+z+'</span><h2>'+ZONE_NAME[z]+'</h2>'+
@@ -848,11 +653,10 @@ function renderHome(){
     });
     html+='</div></section>';
   });
-  box.innerHTML=anyVisible?html:'<div class="no-result view-enter">没有找到匹配“'+esc(keyword)+'”的摊位，换个关键词试试。</div>';
+  box.innerHTML=html;
 }
 
 /* ==================== 详情页渲染 ==================== */
-const IMG_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m4 18 5-5 4 4 3-3 4 4"/></svg>';
 function renderDetail(id){
   const idx=STALLS.findIndex(s=>s.id===id);
   const s=STALLS[idx];
@@ -879,19 +683,15 @@ function renderDetail(id){
       '<div class="owner-cell"><div class="k">摊主 / 社团</div><div class="v">'+esc(d.owner||'—')+'</div></div>'+
       '<div class="owner-cell"><div class="k">小红书链接</div><div class="v">'+xhsHtml+'</div></div>'+
       '<div class="owner-cell"><div class="k">备注</div><div class="v">'+esc(d.note||'—')+'</div></div></div>';
-    if(d.products&&d.products.length){
-      html+='</section><div class="product-section"><div class="section-title"><span class="bar"></span><h2>在售制品</h2><span class="cnt">共 '+d.products.length+' 项</span></div><div class="product-grid">';
-      d.products.forEach(p=>{
-        html+='<article class="product-card"><div class="p-img">'+
-          (p.image?'<img class="zoomable" loading="lazy" src="'+esc(p.image.replace(/\/([^/]+)$/,'/thumb/$1'))+'" data-full="'+esc(p.image)+'" alt="'+esc(p.title)+'">':IMG_ICON+'<span class="ph-text">暂无图片</span>')+
-          '</div><div class="p-body"><span class="p-type">'+esc(p.type||'其他')+'</span>'+
-          '<h3 class="p-title">'+esc(p.title)+'</h3>'+
-          '<div class="p-price">'+priceHtml(p.price)+'</div>'+
-          (p.desc?'<p class="p-desc">'+esc(p.desc).replace(/\n/g,'<br>')+'</p>':'')+'</div></article>';
+    const imgs=(Array.isArray(d.images)?d.images:[]).filter(Boolean);
+    if(imgs.length){
+      html+='</section><div class="product-section"><div class="section-title"><span class="bar"></span><h2>制品图片</h2><span class="cnt">共 '+imgs.length+' 张</span></div><div class="gallery-grid">';
+      imgs.forEach(u=>{
+        html+='<figure class="gallery-card"><img class="zoomable" loading="lazy" src="'+esc(u.replace(/\/([^/.]+)\.[^.]+$/,'/thumb/$1.jpg'))+'" data-full="'+esc(u)+'" alt="制品图"></figure>';
       });
       html+='</div></div>';
     }else{
-      html+='<div class="empty-box"><h3>暂无登记制品</h3><p>可在数据区为该摊位补充 products 列表。</p></div></section>';
+      html+='<div class="empty-box"><h3>暂无制品图片</h3><p>摊主发布制品汇总图后，把图片路径加入该摊位的 images 数组即可。</p></div></section>';
     }
   }else{
     html+='<div class="empty-box"><h3>该摊位信息尚未收录</h3>'+
@@ -919,7 +719,6 @@ function route(){
   }
   window.scrollTo(0,0);
 }
-document.getElementById('search-input').addEventListener('input',e=>{keyword=e.target.value.trim();renderHome();});
 window.addEventListener('hashchange',route);
 /* ===== 图片放大 Lightbox 交互 ===== */
 const lightbox=document.getElementById('lightbox');
