@@ -178,9 +178,15 @@ body.detail-on #view-detail{display:block}
 .product-card{background:var(--light);border:2px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;transition:transform .13s,box-shadow .13s;min-width:0}
 .product-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
 .p-img{aspect-ratio:1/1;background:var(--paper-deep);display:flex;align-items:center;justify-content:center;position:relative;border-bottom:2px solid var(--card-deep)}
-.p-img img{width:100%;height:100%;object-fit:cover}
+.p-img img{width:100%;height:100%;object-fit:cover;cursor:zoom-in}
 .p-img svg{width:42px;height:42px;opacity:.35}
 .p-img .ph-text{position:absolute;bottom:8px;font-size:10px;font-weight:700;color:var(--ink-soft);opacity:.7}
+/* ===== 图片放大 Lightbox ===== */
+.lightbox{position:fixed;inset:0;background:rgba(15,15,14,.92);display:flex;align-items:center;justify-content:center;padding:18px;z-index:999;opacity:0;visibility:hidden;transition:opacity .2s;cursor:zoom-out}
+.lightbox.open{opacity:1;visibility:visible}
+.lb-img{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+.lb-close{position:absolute;top:14px;right:18px;width:44px;height:44px;border-radius:50%;background:var(--yellow);color:var(--ink);font-size:26px;font-weight:900;line-height:1;display:flex;align-items:center;justify-content:center}
+.lb-close:active{transform:scale(.92)}
 .p-body{padding:12px 14px 15px;display:flex;flex-direction:column;gap:7px;flex:1}
 .p-type{align-self:flex-start;font-size:10px;font-weight:900;background:var(--paper-deep);border:1.5px solid var(--card-deep);padding:2px 8px;border-radius:6px}
 .p-title{font-size:14px;font-weight:700;line-height:1.4;word-break:break-word}
@@ -265,6 +271,12 @@ body.detail-on #view-detail{display:block}
 </div>
 
 <div class="hazard" aria-hidden="true" style="margin-top:20px"></div>
+
+<!-- ==================== 图片放大层 ==================== -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lb-close" id="lb-close" type="button" aria-label="关闭">&times;</button>
+  <img class="lb-img" id="lb-img" src="" alt="">
+</div>
 
 <script>
 /* ================================================================
@@ -810,7 +822,7 @@ function renderDetail(id){
       html+='</section><div class="product-section"><div class="section-title"><span class="bar"></span><h2>在售制品</h2><span class="cnt">共 '+d.products.length+' 项</span></div><div class="product-grid">';
       d.products.forEach(p=>{
         html+='<article class="product-card"><div class="p-img">'+
-          (p.image?'<img src="'+esc(p.image)+'" alt="'+esc(p.title)+'">':IMG_ICON+'<span class="ph-text">暂无图片</span>')+
+          (p.image?'<img class="zoomable" src="'+esc(p.image)+'" alt="'+esc(p.title)+'">':IMG_ICON+'<span class="ph-text">暂无图片</span>')+
           '</div><div class="p-body"><span class="p-type">'+esc(p.type||'其他')+'</span>'+
           '<h3 class="p-title">'+esc(p.title)+'</h3>'+
           '<div class="p-price">'+priceHtml(p.price)+'</div>'+
@@ -848,6 +860,29 @@ function route(){
 }
 document.getElementById('search-input').addEventListener('input',e=>{keyword=e.target.value.trim();renderHome();});
 window.addEventListener('hashchange',route);
+/* ===== 图片放大 Lightbox 交互 ===== */
+const lightbox=document.getElementById('lightbox');
+const lbImg=document.getElementById('lb-img');
+function openLightbox(src){
+  lbImg.src=src;
+  lightbox.classList.add('open');
+  lightbox.setAttribute('aria-hidden','false');
+  document.body.style.overflow='hidden';
+}
+function closeLightbox(){
+  lightbox.classList.remove('open');
+  lightbox.setAttribute('aria-hidden','true');
+  document.body.style.overflow='';
+  lbImg.src='';
+}
+document.addEventListener('click',e=>{
+  const z=e.target.closest('.zoomable');
+  if(z){e.preventDefault();openLightbox(z.src);return;}
+  if(lightbox.classList.contains('open')&&(e.target===lightbox||e.target.closest('#lb-close')))closeLightbox();
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&lightbox.classList.contains('open'))closeLightbox();
+});
 route();
 </script>
 </body>
