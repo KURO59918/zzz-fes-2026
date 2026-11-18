@@ -272,6 +272,39 @@ body.detail-on #view-detail{display:block}
   .wrap{padding:0 14px 50px}
   .detail-hero{padding:20px 18px}
 }
+
+/* ==================== 收藏功能 ==================== */
+.fav-toggle{display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.fav-toggle .ico{transition:fill .12s}
+/* 主页卡片右上角星星角标 */
+.card-star{
+  position:absolute;top:7px;right:7px;width:28px;height:28px;
+  background:var(--light);border:1.6px solid var(--line);border-radius:7px;
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.25));
+}
+.card-star .ico{width:20px;height:20px;fill:#fff;stroke:var(--ink);stroke-width:1.4}
+.card-star.on .ico{fill:var(--yellow)}
+/* 详情页摊位收藏星星按钮 */
+.stall-fav-btn{
+  width:48px;height:48px;border-radius:9px;border:2px solid var(--metal-d);
+  background:var(--paper);transition:transform .12s,background .12s,border-color .12s;
+}
+.stall-fav-btn:hover{transform:translateY(-2px);border-color:var(--line)}
+.stall-fav-btn .ico{width:29px;height:29px;fill:#fff;stroke:var(--ink);stroke-width:1.5}
+.stall-fav-btn.on{background:var(--yellow);border-color:var(--line)}
+.stall-fav-btn.on .ico{fill:var(--yellow)}
+/* 图片右下角爱心 */
+.gallery-card{position:relative}
+.img-heart{
+  position:absolute;right:9px;bottom:9px;width:40px;height:40px;border-radius:50%;
+  background:rgba(255,255,255,.93);border:2px solid var(--line);
+  box-shadow:0 2px 5px rgba(0,0,0,.28);transition:transform .12s;
+}
+.img-heart:hover{transform:scale(1.08)}
+.img-heart .ico{width:22px;height:22px;fill:#fff;stroke:var(--ink);stroke-width:1.7}
+.img-heart.on .ico{fill:#e63946;stroke:var(--ink)}
+/* 只看已收藏切换按钮（复用 .zf） */
+.fav-only-btn.active{background:var(--yellow)}
 </style>
 </head>
 <body>
@@ -305,6 +338,7 @@ body.detail-on #view-detail{display:block}
       <span class="pill">未收录 <b id="stat-todo">0</b></span>
     </div>
     <div class="zone-filters" id="zone-filters"></div>
+    <button class="zf fav-only-btn" id="fav-only-btn" type="button">只看已收藏</button>
     <div class="role-picker" id="role-picker">
       <button class="role-trigger" id="role-trigger" type="button" aria-haspopup="true" aria-expanded="false">
         <span class="rt-label" id="rt-label">按角色筛选摊位</span>
@@ -791,6 +825,35 @@ function xhsSearchUrl(name){return 'https://www.xiaohongshu.com/search_result?ke
 let activeZone='ALL';
 let activeRole=null;
 
+/* ==================== 收藏（localStorage，本地保存） ==================== */
+const FAV_STALL_KEY='zzz_fav_stalls';
+const FAV_IMG_KEY='zzz_fav_images';
+function loadSet(key){
+  try{
+    const a=JSON.parse(localStorage.getItem(key)||'[]');
+    return new Set(Array.isArray(a)?a:[]);
+  }catch(e){return new Set();}
+}
+function saveSet(key,set){
+  try{localStorage.setItem(key,JSON.stringify(Array.from(set)));}catch(e){}
+}
+let favStalls=loadSet(FAV_STALL_KEY);
+let favImages=loadSet(FAV_IMG_KEY);
+let favOnly=false;
+function isStallFav(id){return favStalls.has(id);}
+function isImgFav(u){return favImages.has(u);}
+function toggleStallFav(id){
+  if(favStalls.has(id))favStalls.delete(id);else favStalls.add(id);
+  saveSet(FAV_STALL_KEY,favStalls);
+}
+function toggleImgFav(u){
+  if(favImages.has(u))favImages.delete(u);else favImages.add(u);
+  saveSet(FAV_IMG_KEY,favImages);
+}
+/* 内联 SVG 图标 */
+const STAR_ICO='<svg class="ico" viewBox="0 0 24 24"><path d="M12 2.6l2.86 5.79 6.39.93-4.62 4.5 1.09 6.37L12 17.27l-5.72 3.01 1.09-6.37-4.62-4.5 6.39-.93z"/></svg>';
+const HEART_ICO='<svg class="ico" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+
 /* ==================== 主页渲染 ==================== */
 function renderStats(){
   const done=STALLS.filter(s=>hasImages(s.id)).length;
@@ -823,6 +886,7 @@ function renderHome(){
     if(activeZone!=='ALL'&&activeZone!==z)return;
     let list=STALLS.filter(s=>s.id[0]===z);
     if(roleList)list=list.filter(s=>roleList.indexOf(s.id)!==-1);
+    if(favOnly)list=list.filter(s=>isStallFav(s.id));
     if(!list.length)return;
     shown+=list.length;
     const done=list.filter(s=>hasImages(s.id)).length;
@@ -832,13 +896,18 @@ function renderHome(){
       '<span class="zc">'+zcText+'</span></div><div class="stall-grid">';
     list.forEach(s=>{
       html+='<a class="stall-card" href="#/stall/'+s.id+'">'+
+        '<span class="fav-toggle card-star'+(isStallFav(s.id)?' on':'')+'" data-fav-stall="'+s.id+'" aria-label="收藏摊位">'+STAR_ICO+'</span>'+
         '<span class="stall-no">'+s.id+'</span>'+
         '<span class="stall-name">'+esc(s.name)+'</span>'+statusBadge(s)+'</a>';
     });
     html+='</div></section>';
   });
-  if(activeRole&&shown===0){
-    html='<div class="empty-box"><h3>没有找到含该角色的摊位</h3><p>请清除角色筛选后重试。</p></div>';
+  if(shown===0){
+    if(favOnly){
+      html='<div class="empty-box"><h3>还没有收藏任何摊位</h3><p>进入摊位详情页，点击星星即可收藏，收藏后会显示在这里。</p></div>';
+    }else{
+      html='<div class="empty-box"><h3>没有找到含该角色的摊位</h3><p>请清除角色筛选后重试。</p></div>';
+    }
   }
   box.innerHTML=html;
 }
@@ -915,7 +984,8 @@ function renderDetail(id){
       '<span class="dh-no">'+s.id+'</span>'+
       '<span class="dh-name">'+esc(s.name)+'</span>'+
       '<span class="dh-zone">'+ZONE_NAME[id[0]]+' · 4号馆同人区</span>'+
-      (d&&d.example?'<span class="demo-flag">示例数据</span>':'')+'</div>';
+      (d&&d.example?'<span class="demo-flag">示例数据</span>':'')+
+      '<button class="fav-toggle stall-fav-btn'+(isStallFav(id)?' on':'')+'" type="button" data-fav-stall="'+id+'" aria-label="收藏摊位">'+STAR_ICO+'</button></div>';
 
   if(d){
     const xhsList=(Array.isArray(d.xhs)?d.xhs:(d.xhs?[d.xhs]:[])).filter(Boolean);
@@ -930,7 +1000,8 @@ function renderDetail(id){
     if(imgs.length){
       html+='</section><div class="product-section"><div class="section-title"><span class="bar"></span><h2>制品图片</h2><span class="cnt">共 '+imgs.length+' 张</span></div><div class="gallery-grid">';
       imgs.forEach(u=>{
-        html+='<figure class="gallery-card"><img class="zoomable" loading="lazy" src="'+esc(u.replace(/\/([^/.]+)\.[^.]+$/,'/thumb/$1.jpg'))+'" data-full="'+esc(u)+'" alt="制品图"></figure>';
+        html+='<figure class="gallery-card"><img class="zoomable" loading="lazy" src="'+esc(u.replace(/\/([^/.]+)\.[^.]+$/,'/thumb/$1.jpg'))+'" data-full="'+esc(u)+'" alt="制品图">'+
+          '<button class="fav-toggle img-heart'+(isImgFav(u)?' on':'')+'" type="button" data-fav-img="'+esc(u)+'" aria-label="收藏图片">'+HEART_ICO+'</button></figure>';
       });
       html+='</div></div>';
     }else{
@@ -985,6 +1056,31 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'&&lightbox.classList.contains('open'))closeLightbox();
+});
+
+/* ==================== 收藏交互（事件委托） ==================== */
+document.getElementById('fav-only-btn').addEventListener('click',()=>{
+  favOnly=!favOnly;
+  document.getElementById('fav-only-btn').classList.toggle('active',favOnly);
+  renderHome();
+});
+document.addEventListener('click',e=>{
+  const sb=e.target.closest('[data-fav-stall]');
+  if(sb){
+    e.preventDefault();
+    const sid=sb.dataset.favStall;
+    toggleStallFav(sid);
+    if(document.body.classList.contains('detail-on'))renderDetail(sid);
+    else renderHome();
+    return;
+  }
+  const hb=e.target.closest('[data-fav-img]');
+  if(hb){
+    e.preventDefault();
+    const u=hb.dataset.favImg;
+    toggleImgFav(u);
+    hb.classList.toggle('on',isImgFav(u));
+  }
 });
 route();
 </script>
